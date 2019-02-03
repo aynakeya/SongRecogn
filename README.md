@@ -10,7 +10,7 @@ Here](https://www.bilibili.com/read/readlist/rl54978)
 
 
 ## Setup
-Make sure you install all dependency the requirements.txt
+Make sure you install all dependency in the requirements.txt
 
 Change the sqlalchemy url in srModule/Config to your own database.
 
@@ -58,7 +58,9 @@ Console.addAudioFromDir("song")
 
 ## ABC
 3 sec of sample audio already have a very higher accuracy.
+
 The longersample audio are, the longer time it costs for recognizing.
+
 
 
 ## Thanks
