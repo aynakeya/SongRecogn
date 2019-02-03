@@ -45,7 +45,7 @@ type the command to use the console.
 
 ![open console](plot/c2.JPG)
 ![add song](plot/c6.JPG)
-![recognzie](plot/c10.JPG)
+![recognzie](plot/c9.JPG)
 
 If you want to use it directly in script.
 
