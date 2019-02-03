@@ -58,7 +58,7 @@ Console.addAudioFromDir("song")
 
 ## ABC
 3 sec of sample audio already have a very higher accuracy.
-Longer the sample audio longer the time it cost for recognize.
+The longersample audio are, the longer time it costs for recognizing.
 
 
 ## Thanks
