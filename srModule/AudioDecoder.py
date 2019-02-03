@@ -18,11 +18,12 @@ def generateFilehash(filepath, blocksize=2 ** 16):
 
 
 def encodeAudio(filepath, dir="temp"):
+    dir = os.path.realpath(dir)
     Console.log("Encode Audio with ffmpeg......", end="")
     if not os.path.exists(dir):
         os.makedirs(dir)
     path = os.path.join(dir, "temp" + generateFilehash(filepath)[:6:] + srConfig.audio_extension)
-    os.system(" ".join(["ffmpeg","-loglevel" ,"quiet", "-i", filepath, "-y", "-acodec", "mp3", "-ar", str(srConfig.audio_frame_rate), path]))
+    os.system(" ".join(["ffmpeg","-loglevel" ,"quiet", "-i", "\"%s\""%filepath, "-y", "-acodec", "mp3", "-ar", str(srConfig.audio_frame_rate), path]))
     return read(path)
 
 
