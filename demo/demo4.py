@@ -1,0 +1,15 @@
+from srModule.Model import Audio
+import time
+song0 = Audio.initFromFile("songp/shimogezhe_12.m4a")
+#song0 = song.initFromFile("/Users/luyijou/Desktop/ Mine/Python/SongRecogn/song/nicengshishaonian.mp3")
+#print(song0.getId())
+print("get")
+print(song0.fs,song0.channels)
+print(song0.getFingerprints())
+print("down")
+#song0.insertFingerprints()
+print("ok")
+a = time.time()
+print(song0.recognize())
+b = time.time()
+print(b-a)
