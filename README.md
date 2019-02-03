@@ -18,6 +18,7 @@ Create tables by using createDatabase.py
 
 `python createDatabase.py`
 
+*Change the config of mysql to reach a higher performance*
 
 ## Quickstart
 ```
@@ -42,7 +43,9 @@ quit : Quit
 
 type the command to use the console.
 
-
+![open console](plot/c2.JPG)
+![add song](plot/c6.JPG)
+![recognzie](plot/c10.JPG)
 
 If you want to use it directly in script.
 
@@ -52,3 +55,14 @@ Console.addAudio("song/linagyu.mp3")
 Console.recognizeAudio("songp/liangyu_06.mp3")
 Console.addAudioFromDir("song")
 ```
+
+## ABC
+3 sec of sample audio already have a very higher accuracy.
+Longer the sample audio longer the time it cost for recognize.
+
+
+## Thanks
+
+Thanks:
+
+[dejavu](https://github.com/worldveil/dejavu)
