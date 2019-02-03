@@ -19,7 +19,6 @@ def recognize(args):
 
 def add_audio(args):
     filepath = parsePath(args)
-    print(filepath)
     if os.path.exists(filepath):
         Console.addAudio(filepath)
     else:
