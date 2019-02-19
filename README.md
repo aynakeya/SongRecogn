@@ -1,7 +1,7 @@
 SongRecogn
 ==========
 
-This is a song recognization program using shazam's algorithm.
+This is a song recognition program using shazam's algorithm.
 
 [Paper](http://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf)
 
