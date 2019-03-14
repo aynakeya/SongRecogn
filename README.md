@@ -12,7 +12,7 @@ Here](https://www.bilibili.com/read/readlist/rl54978)
 ## Setup
 Make sure you install all dependency in the requirements.txt
 
-Change the sqlalchemy url in srModule/Config to your own database.
+**Change Config: Change the sqlalchemy url in srModule/Config to your own database.**
 
 Create tables by using createDatabase.py
 
