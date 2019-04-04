@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Integer, Boolean, create_engine, ForeignK
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from .Config import srConfig
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import ProgrammingError,DatabaseError
 
 # # 创建对象的基类:
 Base = declarative_base()
@@ -18,12 +18,15 @@ def checkDatabase(conn=srConfig.sqlalchemy_address):
         return (True,0,"")
     except ProgrammingError as err:
         return (False,err.code,err.orig)
+    except DatabaseError as err:
+        return (False, err.code, err.orig)
 
 def initSession(conn=srConfig.sqlalchemy_address):
     # init connection
     engine = create_engine(conn, pool_size=srConfig.mysql_max_connection)
     # create sessionmaker:
-    DBSession = sessionmaker(bind=engine)
+    #DBSession = sessionmaker(bind=engine)
+    DBSession = sessionmaker(bind=engine,autoflush=False, expire_on_commit=False)
 
     return DBSession, engine
 
@@ -36,13 +39,11 @@ def createTables(conn=srConfig.sqlalchemy_address):
     except:
         return False
 
-
-# 定义User对象:
 class Songs(Base):
-    # 表的名字:
+    # Table name:
     __tablename__ = 'Songs'
 
-    # 表的结构:
+    # Table structure:
     id = Column(Integer, autoincrement=True, primary_key=True)
     name = Column(String(64))
     filehash = Column(String(512), index=True)
@@ -51,9 +52,10 @@ class Songs(Base):
 
 
 class Fingerprints(Base):
+    # Table name:
     __tablename__ = 'Fingerprints'
 
-    # 表的结构:
+    # Table structure:
     id = Column(Integer, autoincrement=True, primary_key=True)
     song_id = Column(Integer, ForeignKey('Songs.id'))
     # length of string depend ono how long your fingerprint is.

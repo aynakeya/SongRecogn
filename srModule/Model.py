@@ -165,14 +165,43 @@ class _insertFingerprints(threading.Thread):
         self.db = db
         self.song_id = song_id
         self.data = data
+
+    # using add()
+    # def run(self):
+    #     dbs = scoped_session(self.db)()
+    #     for data in self.data:
+    #         fingerprint, offset = data
+    #         fingerprint0 = Database.Fingerprints(song_id=self.song_id, fingerprint=fingerprint, offset=int(offset))
+    #         dbs.add(fingerprint0)
+    #     dbs.commit()
+    #     dbs.close()
+
+    # using bulk_save_objects
+    # def run(self):
+    #     ss = scoped_session(self.db)
+    #     dbs = ss()
+    #     dbs.bulk_save_objects([Database.Fingerprints(song_id=self.song_id, fingerprint=fingerprint, offset=int(offset)) for fingerprint, offset in self.data])
+    #     dbs.commit()
+    #     dbs.close()
+    #     ss.remove()
+
+    # using bulk_insert_mappings
+    # def run(self):
+    #     ss = scoped_session(self.db)
+    #     dbs = ss()
+    #     dbs.bulk_insert_mappings(Database.Fingerprints,[{"song_id":self.song_id,"fingerprint":fingerprint, "offset":int(offset)} for fingerprint, offset in self.data])
+    #     dbs.commit()
+    #     dbs.close()
+    #     ss.remove()
+
+    # using core
     def run(self):
-        dbs = scoped_session(self.db)()
-        for data in self.data:
-            fingerprint, offset = data
-            fingerprint0 = Database.Fingerprints(song_id=self.song_id, fingerprint=fingerprint, offset=int(offset))
-            dbs.add(fingerprint0)
+        ss = scoped_session(self.db)
+        dbs = ss()
+        dbs.execute(Database.Fingerprints.__table__.insert(),[{"song_id":self.song_id,"fingerprint":fingerprint, "offset":int(offset)} for fingerprint, offset in self.data])
         dbs.commit()
         dbs.close()
+        ss.remove()
 
 class _getFingerprints(threading.Thread):
     def __init__(self, threadID,audio):

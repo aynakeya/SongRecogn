@@ -68,3 +68,8 @@ The longersample audio are, the longer time it costs for recognizing.
 Thanks:
 
 [dejavu](https://github.com/worldveil/dejavu)
+
+
+## Change Log
+
+2019/4/4: Increase inserting speed 
