@@ -73,4 +73,4 @@ Thanks:
 ## Change Log
 
 2019/4/4: Increase inserting speed 
-2019/4/6: Fix potential memory issue.
+2019/4/6: Fix potential memory issue + add mutliprocessing support in recognizing.

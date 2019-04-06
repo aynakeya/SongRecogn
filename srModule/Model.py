@@ -1,7 +1,7 @@
 from . import AudioDecoder,Fingerprint,Database
 from .Config import srConfig
 from sqlalchemy.orm import sessionmaker,session,scoped_session
-import os,threading,time,random,gc
+import os,threading,time,random,gc,multiprocessing
 
 class Audio(object):
     db,db_enigne = Database.initSession()
@@ -128,11 +128,13 @@ class Audio(object):
         dbs.close()
         ss.remove()
 
-    def recognize(self):
+    # use single process
+    def recognize_s(self):
         dbs = self.db()
 
         matches = []
         songs = {}
+
 
         for fingerprint,offest in self.fingerprints:
             # find all the record match hash.
@@ -160,6 +162,36 @@ class Audio(object):
 
         # for key in posibility.keys():
         #     print(key,max(posibility[key].values()))
+        return mostpossible
+
+    # use multi process
+    def recognize(self):
+        ss = scoped_session(self.db)
+        dbs = ss()
+        matches = []
+        p = multiprocessing.Pool()
+        result = p.map(_matchFingerprints,(data for data in self.fingerprints))
+        p.close()
+        p.join()
+        for r in result:
+            matches.extend(r)
+        posibility = {}
+        mostpossible = {"id":"","name":"","count":0}
+        largest = 0
+        for song_id,offest_diff in matches:
+            if not song_id in posibility:
+                posibility[song_id] = dict()
+            if not offest_diff in posibility[song_id]:
+                posibility[song_id][offest_diff] = 0
+            posibility[song_id][offest_diff] += 1
+            if posibility[song_id][offest_diff] > largest:
+                largest = posibility[song_id][offest_diff]
+                mostpossible["id"] = song_id
+                mostpossible["name"] = dbs.query(Database.Songs).filter_by(id=song_id).first().name
+                mostpossible["count"] = largest
+
+        dbs.close()
+        ss.remove()
         return mostpossible
 
     def cleanup(self):
@@ -221,3 +253,19 @@ class _getFingerprints(threading.Thread):
         if self.audio.channels is None:
             self.audio.read()
         self.audio.getFingerprints()
+
+def _matchFingerprints(data):
+    fp,offset = data
+    db,e = Database.initSession()
+    ss = scoped_session(db)
+    dbs = ss()
+    matches = []
+    try:
+        for r in dbs.query(Database.Fingerprints).filter_by(fingerprint=fp).all():
+            s = dbs.query(Database.Songs).filter_by(id=r.song_id).first()
+            matches.append((str(s.id), str(abs(r.offset - offset))))
+    finally:
+        dbs.close()
+        ss.remove()
+
+    return matches

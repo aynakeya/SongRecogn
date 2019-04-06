@@ -29,36 +29,36 @@ def encodeAudio(filepath, dir="temp"):
 
 
 def read(filepath):
-    # try:
-    #     filename, exten = os.path.splitext(filepath)
-    #     audiofile = AudioSegment.from_file(filepath)
+    try:
+        filename, exten = os.path.splitext(filepath)
+        audiofile = AudioSegment.from_file(filepath)
+
+        # set all audio file frame rate with a default value and same extensions
+        if audiofile.frame_rate != srConfig.audio_frame_rate or exten != srConfig.audio_extension:
+            return encodeAudio(filepath)
+        # data = audiofile.get_array_of_samples()
+        # Stereo audio array is in form of [sample_1_L, sample_1_R, sample_2_L, sample_2_R, …]
+        data = np.fromstring(audiofile.raw_data, np.int16)
+        channels = []
+        # Get data for different channel
+        for channel in range(audiofile.channels):
+            channels.append(data[channel::audiofile.channels])
+    except:
+        return 0, 0
+
+    # filename, exten = os.path.splitext(filepath)
+    # audiofile = AudioSegment.from_file(filepath)
     #
-    #     # set all audio file frame rate with a default value and same extensions
-    #     if audiofile.frame_rate != srConfig.audio_frame_rate or exten != srConfig.audio_extension:
-    #         return encodeAudio(filepath)
-    #     # data = audiofile.get_array_of_samples()
-    #     # Stereo audio array is in form of [sample_1_L, sample_1_R, sample_2_L, sample_2_R, …]
-    #     data = np.fromstring(audiofile.raw_data, np.int16)
-    #     channels = []
-    #     # Get data for different channel
-    #     for channel in range(audiofile.channels):
-    #         channels.append(data[channel::audiofile.channels])
-    # except:
-    #     return 0, 0
-
-    filename, exten = os.path.splitext(filepath)
-    audiofile = AudioSegment.from_file(filepath)
-
-    # set all audio file frame rate with a default value and same extensions
-    if audiofile.frame_rate != srConfig.audio_frame_rate or exten != srConfig.audio_extension:
-        return encodeAudio(filepath)
-    # data = audiofile.get_array_of_samples()
-    # Stereo audio array is in form of [sample_1_L, sample_1_R, sample_2_L, sample_2_R, …]
-    data = np.fromstring(audiofile.raw_data, np.int16)
-    channels = []
-    # Get data for different channel
-    for channel in range(audiofile.channels):
-        channels.append(data[channel::audiofile.channels])
+    # # set all audio file frame rate with a default value and same extensions
+    # if audiofile.frame_rate != srConfig.audio_frame_rate or exten != srConfig.audio_extension:
+    #     return encodeAudio(filepath)
+    # # data = audiofile.get_array_of_samples()
+    # # Stereo audio array is in form of [sample_1_L, sample_1_R, sample_2_L, sample_2_R, …]
+    # data = np.fromstring(audiofile.raw_data, np.int16)
+    # channels = []
+    # # Get data for different channel
+    # for channel in range(audiofile.channels):
+    #     channels.append(data[channel::audiofile.channels])
 
     return audiofile.frame_rate, channels
 
