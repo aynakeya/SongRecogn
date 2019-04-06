@@ -1,6 +1,6 @@
 from . import  Model
 from .Config import srConfig
-import time
+import time,gc
 
 def log(*msg,end="\n"):
     if not srConfig.enable_console_msg:
@@ -78,6 +78,7 @@ def addAudioFromDir(dir):
                 total_threads[st].start()
                 running_threads.append(total_threads[st])
                 st += 1
+                time.sleep(0.2)
                 continue
             for t in running_threads:
                 if not t.is_alive():
@@ -92,8 +93,11 @@ def addAudioFromDir(dir):
             log("Start insert fingerprints for %s" % song.name, end="......")
             t1 = time.time()
             song.startInsertFingerprints()
+            song.cleanup()
             t2 = time.time()
             log("Insert fingerprints into database success (Time cost: %d sec)" % (t2 - t1))
+
+        gc.collect()
 
     log("all audio have been added.")
 

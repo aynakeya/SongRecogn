@@ -48,7 +48,6 @@ class Songs(Base):
     name = Column(String(64))
     filehash = Column(String(512), index=True)
     fingerprinted = Column(Boolean, default=False)
-    fingerprints = relationship('Fingerprints', backref='song', lazy='dynamic')
 
 
 class Fingerprints(Base):
@@ -57,7 +56,7 @@ class Fingerprints(Base):
 
     # Table structure:
     id = Column(Integer, autoincrement=True, primary_key=True)
-    song_id = Column(Integer, ForeignKey('Songs.id'))
+    song_id = Column(Integer,index=False)
     # length of string depend ono how long your fingerprint is.
     fingerprint = Column(String(64), index=True)
     offset = Column(Integer)

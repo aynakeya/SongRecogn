@@ -12,15 +12,15 @@ class FPconfig(object):
     # the ratio of overlapping area of a window size
     fft_overlap_ratio = 0.5
     # fingerprint_number = 15
-    # higer the value is less the number of peak is. less accuracy
+    # higher the value is less the number of peak is. less accuracy
     minimun_peak_amplitude = 10 #20
     peak_neighborhood_size = 20 #25
     # sort peak before generate Fast Combinatorial Hashing
     peak_sort = True
     # important: find correct target zone will hugely effect the result
-    time_constraint_condition = (9,200) # (min,max)
+    time_constraint_condition = (9,200) # (min,max) (9,200)
     #freqs_constraint_condition = (min, max)  # not use. unneccessary
-    fanout_factor = 20
+    fanout_factor = 15 # 20
     # max 64(using sha256)
     fingerprint_cutoff = 0
 

@@ -23,7 +23,8 @@ def encodeAudio(filepath, dir="temp"):
     if not os.path.exists(dir):
         os.makedirs(dir)
     path = os.path.join(dir, "temp" + generateFilehash(filepath)[:6:] + srConfig.audio_extension)
-    os.system(" ".join(["ffmpeg","-loglevel" ,"quiet", "-i", "\"%s\""%filepath, "-y", "-acodec", "mp3", "-ar", str(srConfig.audio_frame_rate), "\"%s\""%path]))
+    os.system(" ".join(["ffmpeg", "-loglevel", "quiet", "-i", "\"%s\"" % filepath, "-y", "-acodec", "mp3", "-ar",
+                        str(srConfig.audio_frame_rate), "\"%s\"" % path]))
     return read(path)
 
 

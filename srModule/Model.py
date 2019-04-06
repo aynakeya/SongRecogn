@@ -1,7 +1,7 @@
 from . import AudioDecoder,Fingerprint,Database
 from .Config import srConfig
 from sqlalchemy.orm import sessionmaker,session,scoped_session
-import os,threading,time,random
+import os,threading,time,random,gc
 
 class Audio(object):
     db,db_enigne = Database.initSession()
@@ -48,12 +48,15 @@ class Audio(object):
         for channel in self.channels:
             arr = Fingerprint.getSpecgramArr(channel, self.fs)
             peaks = Fingerprint.getConstellationMap(arr)
+            del arr
             fp = Fingerprint.getFBHashGenerator(peaks)
-
+            del peaks
             # get unioin for different channel
             fingerprints |= set(fp)
 
         self.fingerprints = fingerprints
+        del fingerprints
+        gc.collect()
         return
 
     def getId(self,new=False):
@@ -110,20 +113,20 @@ class Audio(object):
 
     # single thread
     def insertFingerprints(self):
-        dbs = self.db()
+        ss = scoped_session(self.db)
+        dbs = ss()
         song = dbs.query(Database.Songs).filter_by(id=self.id).first()
         if song.fingerprinted:
             print("This song already be fingerprinted")
             return
-        for index,data in enumerate(self.fingerprints):
-            fingerprint, offset = data
-            fingerprint0 = Database.Fingerprints(song_id=self.id, fingerprint=fingerprint, offset=int(offset))
-            dbs.add(fingerprint0)
-            if index % 1000 == 0:
-                dbs.commit()
+        dbs.execute(Database.Fingerprints.__table__.insert(),
+                    [{"song_id": self.id, "fingerprint": fingerprint, "offset": int(offset)} for
+                     fingerprint, offset in self.fingerprints])
+
         song.fingerprinted = True
         dbs.commit()
         dbs.close()
+        ss.remove()
 
     def recognize(self):
         dbs = self.db()
@@ -135,9 +138,10 @@ class Audio(object):
             # find all the record match hash.
             result = dbs.query(Database.Fingerprints).filter_by(fingerprint=fingerprint).all()
             for r in result:
-                matches.append((str(r.song.id),str(abs(r.offset-offest))))
-                if not (str(r.song.id)) in songs:
-                    songs[str(r.song.id)] = r.song.name
+                s = dbs.query(Database.Songs).filter_by(id=r.song_id).first()
+                matches.append((str(s.id),str(abs(r.offset-offest))))
+                if not (str(s.id)) in songs:
+                    songs[str(s.id)] = s.name
 
         posibility = {}
         mostpossible = {"id":"","name":"","count":0}
@@ -157,6 +161,11 @@ class Audio(object):
         # for key in posibility.keys():
         #     print(key,max(posibility[key].values()))
         return mostpossible
+
+    def cleanup(self):
+        del self.fingerprints
+        del self.channels
+        gc.collect()
 
 class _insertFingerprints(threading.Thread):
     def __init__(self, threadID,db,song_id,data):
